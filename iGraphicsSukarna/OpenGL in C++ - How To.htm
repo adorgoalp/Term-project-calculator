@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>OpenGL in C++ - How To</title>
+<link href="../css/programming_notes.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<!-- Begin the outetmost container division -->
+<div id="container">
+
+<!-- print header -->
+<script type="text/javascript" src="../scripts/header.js"></script>
+
+<!-- begin main content division -->
+<div id="content">
+
+<h1>OpenGL in C/C++</h1>
+<h2>How To</h2>
+<p class="p-last-modified">Latest version tested: Visual C++ 2008<br />
+Last modified: July, 2009</p>
+
+<h3>Writing OpenGL programs in Visual C++ 2008 Express</h3>
+
+<h4>Installing Software</h4>
+
+<p>You need to install:</p>
+<ol>
+<li><strong>Visual C++ Express 2008</strong>: Read <a href="../howto/Vcpp_HowTo.html#vcpp-install">How to install Visual C++ Express</a>. VC++ would be installed in &quot;<code>C:\Program Files\Microsoft Visual Studio 9.0\VC</code>&quot;, with headers in  sub-directory &quot;<code>include</code>&quot; and libraries in &quot;<code>lib</code>&quot;.</li>
+
+<li> <strong>Windows SDK</strong> which includes <strong>OpenGL</strong> and <strong>GLU (OpenGL Utility)</strong>. The Visual C++ 2008 Express  bundles the Microsoft Windows SDK, which would be installed in &quot;<code>C:\Program Files\Microsoft SDKs\Windows\v6.0A</code>&quot;. (Otherwise, you need to download and install the Windows SDK separately).<br />
+The followings are used from Windows SDK:
+
+<ul>
+<li><code>gl.h</code>, <code>glu.h</code>: header for OpenGL and GLU in directory &quot;<code>C:\Program Files\Microsoft SDKs\Windows\v6.0A\include\gl</code>&quot;. This directory is to be included in the <code>INCLUDE</code> environment variable or <code>/I&lt;dir&gt;</code> command-line option.</li>
+<li><code>opengl32.lib</code>, <code>glu32.lib</code>: libraries for OpenGL and GLU in directory &quot;<code>C:\Program Files\Microsoft SDKs\Windows\v6.0A\lib</code>&quot;. This directory is  to be included in the <code>LIB</code> environment variable or <code>/L&lt;dir&gt;</code> command-line option. The libraries <code>opengl32.lib</code> and <code>glu32.lib</code> are to be included as linker's input via <code>/link&lt;lib&gt;</code> or <code>/l&lt;lib&gt;</code> command-line option.</li>
+<li><code>opengl32.dll</code>, <code>glu32.dll</code>: dynamic link libraries for OpenGL and GLU in directory &quot;<code>C:\Windows\System32</code>&quot;. This directory is  to be included in <code>PATH</code> environment variable.</li>
+</ul>
+
+<p>If you use the VC++ IDE, the header path and lib path would have been set correctly. If you use CMD shell, you need to run the batch file &quot;<code>vcvars32.bat</code>&quot; (in &quot;<code>C:\Program Files\Microsoft Visual Studio 9.0\VC\bin</code>&quot;) or run the &quot;Visual Studio 200X Command Prompt&quot; instead.</p>
+</li>
+
+<li><strong>GLUT (OpenGL Utility Toolkit)</strong>: Download Nate Robin's original Win32 port of GLUT from  @ <a href="http://www.xmission.com/~nate/glut.html">http://www.xmission.com/~nate/glut.html</a> or freeglut @ <a href="http://freeglut.sourceforge.net">http://freeglut.sourceforge.net</a>. Unzip and copy &quot;<code>glut.h</code>&quot; to &quot;<code>C:\Program Files\Microsoft SDKs\Windows\v6.0A\include\gl</code>&quot;, <code>&quot;glut32.lib</code>&quot; to &quot;<code>C:\Program Files\Microsoft SDKs\Windows\v6.0A\lib</code>&quot;, and &quot;<code>glut32.dll</code>&quot; in &quot;<code>C:\Windows\System32</code>&quot; (same locations as OpenGL and GLU).</li>
+</ol>
+
+<h4>Writing First OpenGL Program with GLUT</h4>
+
+<p>To Write your first OpenGL program (with GLUT):</p>
+
+<ol>
+<li>Launch Visual C++ 2008 Express.</li>
+<li>Create a new &quot;Win32 Console Application&quot; project (take note that GLUT runs as a &quot;Console Application&quot;): Select &quot;File&quot; menu &rArr; New &rArr; Project... &rArr; In &quot;Project Types&quot;, select &quot;Visual C++&quot;, &quot;Win32&quot;. In &quot;Templates&quot;, select &quot;Win32 Console Application&quot;. In &quot;Location&quot;, set your working directory. In &quot;Name&quot;, enter &quot;<code>FirstOpenGLProject</code>&quot; &rArr; Next &rArr; Check &quot;Empty Project&quot; &rArr; Finish.</li>
+<li>Create a new Source file: Right-click on the &quot;Source Files&quot; of the project name &rArr; Add &rArr; New Item... &rArr; In &quot;Categories&quot;, select &quot;Visual C++&quot;, &quot;Code&quot;. In &quot;Templates&quot;, select &quot;C++ File (.cpp)&quot;. In &quot;Name&quot;, type &quot;<code>GL01GettingStarted.cpp</code>&quot; &rArr; Add.</li>
+<li>In the editor panel for &quot;<code>GL01GettingStarted.cpp</code>&quot;, type the following source codes:
+<pre class="code-listing"><span class="code-comment">/*
+ * GL01GettingStarted.cpp
+ * Drawing Simple 2D Shapes: quad, triangle, polygon.
+ */</span>
+#include &lt;gl/glut.h&gt;   <span class="code-comment">// also included gl.h, glu.h</span>
+   
+void display() {
+   glClear(GL_COLOR_BUFFER_BIT);   <span class="code-comment">// Clear the color buffer</span>
+   
+   glBegin(GL_QUADS);              <span class="code-comment">// Each set of 4 vertices form a quad</span>
+      glColor3f(1.0f, 0.0f, 0.0f); <span class="code-comment">// Red</span>
+      glVertex2f(-0.7f, -0.1f);    <span class="code-comment">// x, y</span>
+      glVertex2f(-0.1f, -0.1f);
+      glVertex2f(-0.1f,  0.5f);
+      glVertex2f(-0.7f,  0.5f);
+   glEnd();
+   
+   glBegin(GL_TRIANGLES);          <span class="code-comment">// Each set of 3 vertices form a triangle</span>
+      glColor3f(0.0f, 1.0f, 0.0f); <span class="code-comment">// Green</span>
+      glVertex2f(0.2f, -0.3f);
+      glVertex2f(0.8f, -0.3f);
+      glVertex2f(0.5f,  0.2f);
+   glEnd();
+   
+   glBegin(GL_POLYGON);            <span class="code-comment">// The vertices form one closed polygon</span>
+      glColor3f(0.0f, 0.0f, 1.0f); <span class="code-comment">// Blue</span>
+      glVertex2f(0.2f, 0.3f);
+      glVertex2f(0.4f, 0.3f);
+      glVertex2f(0.5f, 0.5f);
+      glVertex2f(0.4f, 0.7f);
+      glVertex2f(0.2f, 0.7f);
+      glVertex2f(0.1f, 0.5f);
+   glEnd();
+   
+   glFlush();  <span class="code-comment">// Render now</span>
+}
+   
+<span class="code-comment">// GLUT runs as a Console Application</span>
+int main(int argc, char** argv) {
+   glutInit(&amp;argc, argv);          <span class="code-comment">// Initialize GLUT</span>
+   glutCreateWindow(&quot;2D Shapes&quot;);  <span class="code-comment">// Create a window with the given title</span>
+   glutDisplayFunc(display);       <span class="code-comment">// Register callback handler for window re-paint</span>
+   glutMainLoop();                 <span class="code-comment">// Enter infinitely event-processing loop</span>
+   return 0;
+}</pre>
+</li>
+<li>Build the solution (&quot;Build&quot; menu &rArr; Build Solution) and run the program (&quot;Debug&quot; menu &rArr; &quot;Start Without Debugging&quot;). If error occurs, check <a href="#common-errors">Common OpenGL Programming Errors (for VC++)</a>.
+
+<img class="image-left" src="images/Output_GL01GettingStarted.png" />
+</li>
+
+</ol>
+
+<h4>Common OpenGL Programming Errors (for VC++)<a name="common-errors">&nbsp;</a></h4>
+<ul>
+<li>Linkage Error: Right-click on the project name &rArr; In &quot;Configuration&quot; drop-down menu, select &quot;All Configurations&quot; (i.e., release and debug) &rArr; Expand the &quot;Configuration Properties&quot; node. Expand the &quot;Linker&quot; sub-node &rArr; Select &quot;Input&quot; &rArr; In &quot;Additional Dependencies&quot;, type &quot;<code>opengl32.lib glu32.lib glut32.lib</code>&quot;.<br />
+Alternatively, you could also use pre-processor directives to instruct compiler about the libraries used (I prefer this approach, which avoids manual configuration for every project):
+<pre class="code-listing">#ifdef _MSC_VER                         <span class="code-comment">// Check if MS Visual C compiler
+</span>#  pragma comment(lib, &quot;opengl32.lib&quot;)  <span class="code-comment">// Compiler-specific directive to avoid manually configuration</span>
+#  pragma comment(lib, &quot;glu32.lib&quot;)     <span class="code-comment">// Link libraries</span>
+#endif</pre>
+</li>
+<li>&quot;error  C2664: 'xxxx' : cannot convert parameter 2 from 'const char [xx]' to 'LPCWSTR'&quot;: Right-click on the project name &rArr; In &quot;Configuration&quot; drop-down menu, select &quot;All Configurations&quot; (i.e., release and debug) &rArr; Expand the &quot;Configuration Properties&quot; node &rArr; General &rArr; Character Set &rArr; Set to &quot;Use Multi-Byte Character Set&quot;.<br />
+Alternative, you can use preprocessor directives:
+<pre class="code-listing">#ifdef _MSC_VER        <span class="code-comment">// Check if MS Visual C compiler
+</span>#   ifndef _MBCS
+#      define _MBCS    <span class="code-comment">// Uses Multi-byte character set</span>
+#   endif
+#   ifdef _UNICODE     <span class="code-comment">// Not using Unicode character set</span>
+#      undef _UNICODE 
+#   endif
+#   ifdef UNICODE
+#      undef UNICODE 
+#   endif
+#endif</pre>
+</li>
+
+<li>Cannot find &quot;<code>glaux.h</code>&quot;: Try remove &quot;<code>#include &lt;gl/glaux.h&gt;</code>&quot; from the source code. (Nehe's tutorial codes included a header &quot;<code>gl\glaux.h</code>&quot; for reading BMP file from Lesson #6 onwards. Lesson #1 to #5 do not require this header. Gluax is obsolete and excluded from Windows SDK v6.0a.) If that does not work, you may have to download and install glaux library.</li>
+</ul>
+
+<h4>Nehe's OpenGL Tutorial</h4>
+
+<p>Nehe's production maintains an excellent OpenGL tutorial @ <a href="http://nehe.gamedev.net">http://nehe.gamedev.net</a>.</p>
+<p>OpenGL is language neutral, i.e., you can write your OpenGL programs in Windows, Java, Linux, Mac, etc. Under Windows, there are again many ways to write a OpenGL program. e.g., Win32 API directly, GLUT or FreeGLUT, SDL (Single DirectMedia Layer), Allegro, etc.</p>
+<p>Nehe's lessons are explained in Win32 API, which is complex, cumbersome and hard and to understand. Nonetheless, the solutions are also ported to all the other platforms. I strongly suggest that you follow the solution using GLUT (which greatly simplies interaction to Windows).</p>
+<p>To run Nehe's  &quot;Win32&quot; solution in Visual C++, you need to:</p>
+<ol>
+<li>Create a new &quot;Win32 project&quot;: Select &quot;File&quot; menu &rArr; New &rArr; Project... &rArr; In &quot;Project Types&quot;, select &quot;Visual C++&quot;, &quot;Win32&quot;. In &quot;Templates&quot;, select &quot;Win32 Project&quot;. In &quot;Location&quot;, set your working directory. In &quot;Name&quot;, enter &quot;<code>NeheLesson01</code>&quot;. Check &quot;Create directory for solution&quot;. In &quot;Solution Name&quot;, type &quot;<code>NeheLessons</code>&quot; &rArr; Next &rArr; Check &quot;Empty project&quot; &rArr; Finish.</li>
+
+<li>Create a new source file: Right-click on the &quot;Source Files&quot; of the project name &rArr; Add  &rArr; New Item... &rArr; In &quot;Categories&quot;, select &quot;Visual C++&quot;, &quot;Code&quot;. In &quot;Templates&quot;, select &quot;C++ File (.cpp)&quot;. In &quot;Name&quot;, type &quot;<code>NeheLesson01.cpp</code>&quot;  &rArr; Add.</li>
+
+<li>Download the code for Lesson #1 and paste it into &quot;<code>NeheLesson01.cpp</code>&quot;. Nehe's code included a header &quot;<code>gl\glaux.h</code>&quot;, which is obsolete and excluded from Windows SDK v6.0a. This missing header resulted in compilation error. You can remove &quot;<code>#include gl\glaux.h</code>&quot; from most of the Nehe's Lesson #1 to #5 as it is not really used. It is used from Lesson #6 onwards to read a BMP file.
+<pre class="code-listing">
+[TODO] Program Codes
+</pre>
+</li>
+
+<li>Build (&quot;Build&quot; menu &rArr; Build Solution) and Run (&quot;Debug&quot; menu &rArr; &quot;Start Without Debugging&quot;). If error occurs, check <a href="#common-errors">Common OpenGL Programming Errors  (for VC++)</a>.</li>
+<li>You may create a new project for Lesson #2 &quot;<code>NeheLesson02</code>&quot; under the same solution &quot;<code>NeheLessons</code>&quot;.</li>
+</ol>
+
+<h4>Compile in Command-line</h4>
+<p>You can use the following command-line options to compile and link an OpenGL program. (You should study the command-line options produced by VC++. Right-click on the project name &rArr; Properties &rArr; Expand &quot;Configuration Properties&quot; node &rArr; Expand &quot;C/C++&quot; or &quot;Linker&quot; sub-node &rArr; Command-line.) Assume that the headers (<code>gl.h</code>, <code>glu.h</code>, <code>glut.h</code>) path is set in the <code>INCLUDE</code> environment variable, and the link libraries (<code>opengl32.lib</code>, <code>glu32.lib</code>, <code>glut32.lib</code>) path is set in the <code>LIB</code> environment variable:</p>
+
+<pre class="code-listing">
+&gt; cl /D &quot;_MBCS&quot; /c FirstOpenGLProgram.cpp
+[/c option for compile only without linking, /D &quot;_MBCS&quot; for multi-byte character set, /D &quot;_UNICODE&quot; for Unicode character set.]
+&gt; link /link opengl32.lib glu32.lib glut32.lib kernel32.lib user32.lib gdi32.lib FirstOpenGLProgram.obj
+[/link option specifies the link libraries]</pre>
+
+<p>&nbsp;</p>
+<h4>REFERENCES &amp; RESOURCES</h4>
+<ul>
+  <li>OpenGL mother site @ <a href="http://www.opengl.org/">www.opengl.org</a>.</li>
+  <li>Edward Angel, &quot;OpenGL - A Primer&quot;, 3rd eds, Pearson Education.</li>
+  <li>Nehe OpenGL tutorials @ <a href="http://nehe.gamedev.net/">http://nehe.gamedev.net</a>.</li>
+  <li>(Red book) &quot;OpenGL Programming Guide&quot;, 6th eds, 2008, Addison-Wesley.</li>
+</ul>
+
+</div>  <!-- End the content division -->
+
+<!-- print footer -->
+<script type="text/javascript" src="../scripts/footer.js"></script>
+</div>  <!-- End the container division -->
+</body>
+</html>
